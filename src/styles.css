@@ -67,3 +67,31 @@
   border-color: #287d70 !important;
 }
 
+
+/* Brand logo contrast */
+.brand-light > span:last-child {
+    color: #172344;
+  }
+  
+  .brand-light .brand-accent {
+    color: #526df2;
+  }
+  
+  /* Landing navbar hover */
+  .landing-nav nav a {
+    color: #9ca7be;
+    transition: color 0.2s ease;
+  }
+  
+  .landing-nav nav a:hover {
+    color: #526df2;
+  }
+  
+  /* Login link hover */
+  .nav-login {
+    transition: color 0.2s ease;
+  }
+  
+  .nav-login:hover {
+    color: #526df2;
+  }

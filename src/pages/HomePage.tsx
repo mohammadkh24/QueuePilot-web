@@ -1,24 +1,346 @@
-import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowUpLeft, CalendarCheck, Check, ChevronLeft, Clock3, Layers3, Play, ShieldCheck, Sparkles, Users, Zap } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Brand } from '../components/Brand';
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  ArrowUpLeft,
+  CalendarCheck,
+  Check,
+  ChevronLeft,
+  Clock3,
+  Layers3,
+  Play,
+  ShieldCheck,
+  Sparkles,
+  Users,
+  Zap,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { Brand } from "../components/Brand";
 
 const features = [
-  { icon: CalendarCheck, title: 'نوبت‌دهی منظم', text: 'رزروهای مشتریان را یک‌جا ببین و از تداخل زمان‌ها جلوگیری کن.' },
-  { icon: Users, title: 'صف هوشمند', text: 'مراجعه‌کنندگان حضوری را ثبت کن و ترتیب خدمت‌رسانی را مدیریت کن.' },
-  { icon: Zap, title: 'به‌روزرسانی لحظه‌ای', text: 'هر تغییری در صف، همان لحظه برای اعضای متصل نمایش داده می‌شود.' },
+  {
+    icon: CalendarCheck,
+    title: "نوبت‌دهی منظم",
+    text: "رزروهای مشتریان را یک‌جا ببین و از تداخل زمان‌ها جلوگیری کن.",
+  },
+  {
+    icon: Users,
+    title: "صف هوشمند",
+    text: "مراجعه‌کنندگان حضوری را ثبت کن و ترتیب خدمت‌رسانی را مدیریت کن.",
+  },
+  {
+    icon: Zap,
+    title: "به‌روزرسانی لحظه‌ای",
+    text: "هر تغییری در صف، همان لحظه برای اعضای متصل نمایش داده می‌شود.",
+  },
 ];
 
 export function HomePage() {
-  return <div className="landing-page">
-    <header className="landing-nav container"><Link to="/"><Brand light /></Link><nav><a href="#features">امکانات</a><a href="#how">نحوه کار</a><a href="#why">چرا کیوپایلوت؟</a><Link to="/businesses">رزرو نوبت</Link></nav><div className="nav-actions"><Link className="nav-login" to="/auth">ورود</Link><Link className="button button-light" to="/auth">شروع رایگان <ArrowLeft size={16} /></Link></div></header>
-    <main>
-      <section className="hero-section"><div className="hero-grid container"><div className="hero-copy"><motion.div className="hero-kicker" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}><span className="pulse-dot" /> مدیریت نوبت، بدون آشفتگی</motion.div><motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .08 }}>صفِ شلوغ را به<br /><span>تجربه‌ای روان</span> تبدیل کن.</motion.h1><motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .2 }}>کیوپایلوت، همراه هوشمند کسب‌وکارهای خدماتی برای مدیریت نوبت‌ها، صف انتظار و تجربه بهتر مشتریان.</motion.p><motion.div className="hero-actions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .3 }}><Link to="/auth" className="button button-accent">کسب‌وکارت را راه‌اندازی کن <ArrowLeft size={17} /></Link><a href="#how" className="hero-secondary"><span><Play size={14} fill="currentColor" /></span> ببین چطور کار می‌کند</a></motion.div><div className="hero-proof"><div className="proof-avatars"><i>م</i><i>س</i><i>آ</i><i>+</i></div><span>برای تجربه‌ای بهتر در هر مراجعه</span></div></div>
-      <motion.div className="hero-visual" initial={{ opacity: 0, scale: .94, x: -20 }} animate={{ opacity: 1, scale: 1, x: 0 }} transition={{ duration: .7, delay: .15 }}><div className="visual-orbit orbit-one" /><div className="visual-orbit orbit-two" /><div className="dashboard-preview"><div className="preview-top"><div className="preview-brand"><span className="preview-logo"><Layers3 size={14} /></span><b>داشبورد کیوپایلوت</b></div><span className="preview-live"><i /> زنده</span></div><div className="preview-welcome"><div><small>چهارشنبه، ۲۱ آبان</small><h3>روز بخیر، مدیر عزیز 👋</h3></div><div className="preview-avatar">م</div></div><div className="preview-stats"><div><small>مراجعان امروز</small><strong>۲۴</strong><em>+۱۲٪</em></div><div><small>در صف انتظار</small><strong>۰۶</strong><em className="neutral">اکنون</em></div><div><small>نوبت‌های امروز</small><strong>۱۸</strong><em>۸ تکمیل‌شده</em></div></div><div className="preview-queue-head"><b>وضعیت صف انتظار</b><span>مشاهده همه <ChevronLeft size={13} /></span></div><div className="preview-row"><span className="queue-number">۰۱</span><div><b>سارا محمدی</b><small>اصلاح مو · ۳۰ دقیقه</small></div><span className="preview-status status-serving">در حال خدمت</span></div><div className="preview-row"><span className="queue-number">۰۲</span><div><b>آرمان رضایی</b><small>اصلاح ریش · ۱۵ دقیقه</small></div><span className="preview-status status-waiting">در انتظار</span></div><div className="preview-row"><span className="queue-number">۰۳</span><div><b>نیلوفر احمدی</b><small>اصلاح مو · ۳۰ دقیقه</small></div><span className="preview-status status-called">فراخوانده‌شده</span></div><div className="preview-footer"><span><span className="tiny-spark">✦</span> همگام‌سازی لحظه‌ای فعال است</span><span>Socket Live</span></div></div><div className="floating-note note-top"><span className="note-icon"><Zap size={17} /></span><div><b>به‌روزرسانی زنده</b><small>صف همین حالا به‌روز شد</small></div><Check size={17} className="note-check" /></div><div className="floating-note note-bottom"><span className="note-icon note-green"><CalendarCheck size={17} /></span><div><b>نوبت جدید ثبت شد</b><small>امروز · ساعت ۱۱:۳۰</small></div></div></motion.div></div><div className="hero-bottom container"><span>یک راه ساده برای مدیریت بهتر</span><div><span>نوبت‌دهی</span><i /> <span>صف انتظار</span><i /> <span>ارتباط زنده</span></div></div></section>
-      <section className="features-section container" id="features"><div className="section-intro"><div className="eyebrow">همه‌چیز در یک نگاه</div><h2>مدیریت بهتر، با ابزارهای<br /><span>درست و به‌موقع</span></h2><p>به‌جای هماهنگی‌های پراکنده، روی چیزی تمرکز کن که مهم است: ارائه خدمات باکیفیت.</p></div><div className="feature-grid">{features.map((feature, i) => <motion.article className="feature-card" key={feature.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * .1 }}><div className="feature-icon"><feature.icon size={22} /></div><span className="feature-index">۰{i + 1}</span><h3>{feature.title}</h3><p>{feature.text}</p><a href="#how">بیشتر بدانید <ArrowUpLeft size={15} /></a></motion.article>)}</div></section>
-      <section className="how-section" id="how"><div className="container how-grid"><div><div className="eyebrow">شروع ساده است</div><h2>از اولین نوبت تا<br /><span>آخرین مراجعه</span></h2><p>کیوپایلوت فرایندهای روزمره کسب‌وکارت را در یک مسیر شفاف کنار هم قرار می‌دهد.</p><Link to="/auth" className="button button-accent">همین حالا شروع کن <ArrowLeft size={17} /></Link></div><div className="steps-list"><div className="step-item"><span>۱</span><div><b>کسب‌وکارت را بساز</b><p>اطلاعات کسب‌وکار و خدماتت را ثبت کن.</p></div></div><div className="step-item"><span>۲</span><div><b>نوبت‌ها را دریافت کن</b><p>مشتریان زمان مناسب را انتخاب و رزرو می‌کنند.</p></div></div><div className="step-item"><span>۳</span><div><b>صف را زنده مدیریت کن</b><p>وضعیت مراجعه‌کنندگان را بدون تازه‌سازی صفحه تغییر بده.</p></div></div></div></div></section>
-      <section className="why-section container" id="why"><div className="why-card"><div><div className="eyebrow">تمرکز روی تجربه</div><h2>کمتر منتظر بمانند،<br />بیشتر اعتماد کنند.</h2><p>یک تجربه منظم برای مشتری، و یک روز کاری قابل پیش‌بینی‌تر برای تو.</p><Link to="/auth" className="button button-light">ساخت فضای کاری <ArrowLeft size={16} /></Link></div><div className="why-art"><div className="why-ring ring-a" /><div className="why-ring ring-b" /><div className="why-center"><ShieldCheck size={42} /><span>مدیریت مطمئن</span></div><Sparkles className="spark spark-a" /><Sparkles className="spark spark-b" /></div></div></section>
-    </main>
-    <footer className="landing-footer container"><Brand light /><span>© ۱۴۰۵ کیوپایلوت. برای روزهای منظم‌تر.</span><a href="#top">بازگشت به بالا ↑</a></footer>
-  </div>;
+  return (
+    <div className="landing-page">
+      <header className="landing-nav container">
+        <Link to="/">
+          <Brand light />
+        </Link>
+        <nav>
+          <a href="#features">امکانات</a>
+          <a href="#how">نحوه کار</a>
+          <a href="#why">چرا کیوپایلوت؟</a>
+          <Link to="/businesses">رزرو نوبت</Link>
+        </nav>
+        <div className="nav-actions">
+          <Link className="nav-login" to="/auth">
+            ورود
+          </Link>
+          <Link className="button button-light" to="/auth">
+            شروع رایگان <ArrowLeft size={16} />
+          </Link>
+        </div>
+      </header>
+      <main>
+        <section className="hero-section">
+          <div className="hero-grid container">
+            <div className="hero-copy">
+              <motion.div
+                className="hero-kicker"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <span className="pulse-dot" /> مدیریت نوبت، بدون آشفتگی
+              </motion.div>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.08 }}
+              >
+                صفِ شلوغ را به
+                <br />
+                <span>تجربه‌ای روان</span> تبدیل کن.
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                کیوپایلوت، همراه هوشمند کسب‌وکارهای خدماتی برای مدیریت نوبت‌ها،
+                صف انتظار و تجربه بهتر مشتریان.
+              </motion.p>
+              <motion.div
+                className="hero-actions"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <Link to="/auth" className="button button-accent">
+                  کسب‌وکارت را راه‌اندازی کن <ArrowLeft size={17} />
+                </Link>
+                <a href="#how" className="hero-secondary">
+                  <span>
+                    <Play size={14} fill="currentColor" />
+                  </span>{" "}
+                  ببین چطور کار می‌کند
+                </a>
+              </motion.div>
+              <div className="hero-proof">
+                <div className="proof-avatars">
+                  <i>م</i>
+                  <i>س</i>
+                  <i>آ</i>
+                  <i>+</i>
+                </div>
+                <span>برای تجربه‌ای بهتر در هر مراجعه</span>
+              </div>
+            </div>
+            <motion.div
+              className="hero-visual"
+              initial={{ opacity: 0, scale: 0.94, x: -20 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.15 }}
+            >
+              <div className="visual-orbit orbit-one" />
+              <div className="visual-orbit orbit-two" />
+              <div className="dashboard-preview">
+                <div className="preview-top">
+                  <div className="preview-brand">
+                    <span className="preview-logo">
+                      <Layers3 size={14} />
+                    </span>
+                    <b>داشبورد کیوپایلوت</b>
+                  </div>
+                  <span className="preview-live">
+                    <i /> زنده
+                  </span>
+                </div>
+                <div className="preview-welcome">
+                  <div>
+                    <small>چهارشنبه، ۲۱ آبان</small>
+                    <h3>روز بخیر، مدیر عزیز 👋</h3>
+                  </div>
+                  <div className="preview-avatar">م</div>
+                </div>
+                <div className="preview-stats">
+                  <div>
+                    <small>مراجعان امروز</small>
+                    <strong>۲۴</strong>
+                    <em>+۱۲٪</em>
+                  </div>
+                  <div>
+                    <small>در صف انتظار</small>
+                    <strong>۰۶</strong>
+                    <em className="neutral">اکنون</em>
+                  </div>
+                  <div>
+                    <small>نوبت‌های امروز</small>
+                    <strong>۱۸</strong>
+                    <em>۸ تکمیل‌شده</em>
+                  </div>
+                </div>
+                <div className="preview-queue-head">
+                  <b>وضعیت صف انتظار</b>
+                  <span>
+                    مشاهده همه <ChevronLeft size={13} />
+                  </span>
+                </div>
+                <div className="preview-row">
+                  <span className="queue-number">۰۱</span>
+                  <div>
+                    <b>سارا محمدی</b>
+                    <small>اصلاح مو · ۳۰ دقیقه</small>
+                  </div>
+                  <span className="preview-status status-serving">
+                    در حال خدمت
+                  </span>
+                </div>
+                <div className="preview-row">
+                  <span className="queue-number">۰۲</span>
+                  <div>
+                    <b>آرمان رضایی</b>
+                    <small>اصلاح ریش · ۱۵ دقیقه</small>
+                  </div>
+                  <span className="preview-status status-waiting">
+                    در انتظار
+                  </span>
+                </div>
+                <div className="preview-row">
+                  <span className="queue-number">۰۳</span>
+                  <div>
+                    <b>نیلوفر احمدی</b>
+                    <small>اصلاح مو · ۳۰ دقیقه</small>
+                  </div>
+                  <span className="preview-status status-called">
+                    فراخوانده‌شده
+                  </span>
+                </div>
+                <div className="preview-footer">
+                  <span>
+                    <span className="tiny-spark">✦</span> همگام‌سازی لحظه‌ای
+                    فعال است
+                  </span>
+                  <span>Socket Live</span>
+                </div>
+              </div>
+              <div className="floating-note note-top">
+                <span className="note-icon">
+                  <Zap size={17} />
+                </span>
+                <div>
+                  <b>به‌روزرسانی زنده</b>
+                  <small>صف همین حالا به‌روز شد</small>
+                </div>
+                <Check size={17} className="note-check" />
+              </div>
+              <div className="floating-note note-bottom">
+                <span className="note-icon note-green">
+                  <CalendarCheck size={17} />
+                </span>
+                <div>
+                  <b>نوبت جدید ثبت شد</b>
+                  <small>امروز · ساعت ۱۱:۳۰</small>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+          <div className="hero-bottom container">
+            <span>یک راه ساده برای مدیریت بهتر</span>
+            <div>
+              <span>نوبت‌دهی</span>
+              <i /> <span>صف انتظار</span>
+              <i /> <span>ارتباط زنده</span>
+            </div>
+          </div>
+        </section>
+        <section className="features-section container" id="features">
+          <div className="section-intro">
+            <div className="eyebrow">همه‌چیز در یک نگاه</div>
+            <h2>
+              مدیریت بهتر، با ابزارهای
+              <br />
+              <span>درست و به‌موقع</span>
+            </h2>
+            <p>
+              به‌جای هماهنگی‌های پراکنده، روی چیزی تمرکز کن که مهم است: ارائه
+              خدمات باکیفیت.
+            </p>
+          </div>
+          <div className="feature-grid">
+            {features.map((feature, i) => (
+              <motion.article
+                className="feature-card"
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <div className="feature-icon">
+                  <feature.icon size={22} />
+                </div>
+                <span className="feature-index">۰{i + 1}</span>
+                <h3>{feature.title}</h3>
+                <p>{feature.text}</p>
+                <a href="#how">
+                  بیشتر بدانید <ArrowUpLeft size={15} />
+                </a>
+              </motion.article>
+            ))}
+          </div>
+        </section>
+        <section className="how-section" id="how">
+          <div className="container how-grid">
+            <div>
+              <div className="eyebrow">شروع ساده است</div>
+              <h2>
+                از اولین نوبت تا
+                <br />
+                <span>آخرین مراجعه</span>
+              </h2>
+              <p>
+                کیوپایلوت فرایندهای روزمره کسب‌وکارت را در یک مسیر شفاف کنار هم
+                قرار می‌دهد.
+              </p>
+              <Link to="/auth" className="button button-accent">
+                همین حالا شروع کن <ArrowLeft size={17} />
+              </Link>
+            </div>
+            <div className="steps-list">
+              <div className="step-item">
+                <span>۱</span>
+                <div>
+                  <b>کسب‌وکارت را بساز</b>
+                  <p>اطلاعات کسب‌وکار و خدماتت را ثبت کن.</p>
+                </div>
+              </div>
+              <div className="step-item">
+                <span>۲</span>
+                <div>
+                  <b>نوبت‌ها را دریافت کن</b>
+                  <p>مشتریان زمان مناسب را انتخاب و رزرو می‌کنند.</p>
+                </div>
+              </div>
+              <div className="step-item">
+                <span>۳</span>
+                <div>
+                  <b>صف را زنده مدیریت کن</b>
+                  <p>وضعیت مراجعه‌کنندگان را بدون تازه‌سازی صفحه تغییر بده.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="why-section container" id="why">
+          <div className="why-card">
+            <div>
+              <div className="eyebrow">تمرکز روی تجربه</div>
+              <h2>
+                کمتر منتظر بمانند،
+                <br />
+                بیشتر اعتماد کنند.
+              </h2>
+              <p>
+                یک تجربه منظم برای مشتری، و یک روز کاری قابل پیش‌بینی‌تر برای
+                تو.
+              </p>
+              <Link to="/auth" className="button button-light">
+                ساخت فضای کاری <ArrowLeft size={16} />
+              </Link>
+            </div>
+            <div className="why-art">
+              <div className="why-ring ring-a" />
+              <div className="why-ring ring-b" />
+              <div className="why-center">
+                <ShieldCheck size={42} />
+                <span>مدیریت مطمئن</span>
+              </div>
+              <Sparkles className="spark spark-a" />
+              <Sparkles className="spark spark-b" />
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer className="landing-footer container">
+        <Brand light />
+        <span>© ۱۴۰۵ کیوپایلوت. برای روزهای منظم‌تر.</span>
+        <a href="#top">بازگشت به بالا ↑</a>
+      </footer>
+    </div>
+  );
 }
