@@ -4,6 +4,7 @@ import { HomePage } from './pages/HomePage';
 import { AuthPage } from './pages/AuthPage';
 import { DashboardLayout } from './components/DashboardLayout';
 import { OverviewPage } from './pages/OverviewPage';
+import { AnalyticsPage } from './pages/AnalyticsPage';
 import { QueuePage } from './pages/QueuePage';
 import { AppointmentsPage } from './pages/AppointmentsPage';
 import { ServicesPage } from './pages/ServicesPage';
@@ -39,6 +40,7 @@ export default function App() {
     <Route path="/app" element={<Protected><DashboardLayout /></Protected>}>
       <Route index element={<OverviewPage />} />
       <Route path="queue" element={<QueuePage />} />
+      <Route path="analytics" element={<AnalyticsPage />} />
       <Route path="appointments" element={<AppointmentsPage />} />
       <Route path="services" element={<ServicesPage />} />
       <Route path="business" element={<BusinessPage />} />

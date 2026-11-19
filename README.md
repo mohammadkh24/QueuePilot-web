@@ -45,3 +45,19 @@ npm run dev
 - `POST /businesses/:businessId/queue/walk-in` برای ثبت مراجعه‌کننده حضوری بدون ساخت حساب کاربری
 
 این مسیرها در همین نسخه به بک‌اند اضافه شده‌اند. برای رزرو مشتری، کاربر ابتدا ثبت‌نام/ورود می‌کند؛ سپس درخواست از مسیر موجود `POST /businesses/:businessId/appointments` ارسال می‌شود.
+
+## Queue wait-time prediction (V2)
+
+The queue management page now displays the prediction for the next `WAITING` queue entry using:
+
+`GET /businesses/:businessId/predictions/queues/:queueId`
+
+The customer queue page is wired to display the signed-in customer's own prediction using this intended endpoint:
+
+`GET /businesses/:businessId/predictions/me`
+
+**Backend requirement:** the customer `/predictions/me` endpoint must be implemented before the customer prediction card can return data. It must resolve the authenticated user's active queue for the requested business and must never accept an arbitrary queue ID from the client. The currently documented owner prediction endpoint is not a safe substitute for this customer endpoint.
+
+Both queue pages listen for `queue:prediction-updated` on the existing `/queue` Socket.IO namespace and reload their prediction when the event arrives. The prediction card handles insufficient historical samples (`estimatedWaitMinutes: null`) with a dedicated message rather than displaying a fabricated estimate.
+
+The frontend build could not be verified in this environment because dependency installation (`npm ci`) timed out. Run `npm ci` and `npm run build` locally to verify against the installed dependencies and your backend.

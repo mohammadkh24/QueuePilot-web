@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Activity, CalendarDays, ChevronDown, Command, LayoutDashboard, LogOut, Menu, Settings2, Store, Users, X, Zap } from 'lucide-react';
+import { Activity, CalendarDays, ChevronDown, Command, LayoutDashboard, LogOut, Menu, Settings2, Store, Users, X, Zap, BarChart3 } from 'lucide-react';
 import { api, unwrap, getErrorMessage } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { Brand } from './Brand';
@@ -12,6 +12,7 @@ export type DashboardContext = { business: Business | null; refreshBusiness: () 
 const links = [
   { to: '/app', label: 'نمای کلی', icon: LayoutDashboard, end: true },
   { to: '/app/queue', label: 'مدیریت صف', icon: Users },
+  { to: '/app/analytics', label: 'گزارش‌ها و تحلیل', icon: BarChart3 },
   { to: '/app/appointments', label: 'نوبت‌ها', icon: CalendarDays },
   { to: '/app/services', label: 'خدمات', icon: Command },
   { to: '/app/business', label: 'تنظیمات کسب‌وکار', icon: Settings2 },
