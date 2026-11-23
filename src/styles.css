@@ -139,3 +139,65 @@
 .prediction-state-warning{background:#fff8e9;color:#9b742e}
 .prediction-empty{display:flex;align-items:center;gap:9px;margin:16px 0 20px;padding:15px 17px;border:1px dashed #dfe5ef;border-radius:13px;color:#8995a9;font-size:11px}
 @media(max-width:600px){.prediction-card{padding:15px}.prediction-primary{align-items:flex-start;flex-direction:column}.prediction-primary strong{font-size:23px}}
+
+
+/* Queue voice announcements */
+.voice-announcement-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 17px;
+  padding: 13px 16px;
+  border: 1px solid #e7eee9;
+  border-radius: 14px;
+  background: #fff;
+}
+.voice-announcement-info,
+.voice-announcement-actions {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.voice-announcement-info > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.voice-announcement-info strong {
+  color: #263b35;
+  font-size: 12px;
+}
+.voice-announcement-info small {
+  color: #8995a0;
+  font-size: 10px;
+}
+.voice-announcement-icon {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: #8995a0;
+  background: #f2f5f3;
+}
+.voice-announcement-icon.is-enabled {
+  color: #16825e;
+  background: #eaf8f2;
+}
+.voice-announcement-actions {
+  flex-wrap: wrap;
+}
+@media (max-width: 600px) {
+  .voice-announcement-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .voice-announcement-actions {
+    width: 100%;
+  }
+  .voice-announcement-actions .button {
+    flex: 1;
+  }
+}

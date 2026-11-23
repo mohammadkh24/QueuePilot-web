@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { io, type Socket } from 'socket.io-client';
-import { ArrowLeft, BellRing, CheckCircle2, CircleDot, Clock3, Plus, RefreshCw, UserRound, XCircle } from 'lucide-react';
+import { ArrowLeft, BellRing, CheckCircle2, CircleDot, Clock3, Plus, RefreshCw, UserRound, Volume2, VolumeX, Play, XCircle } from 'lucide-react';
 import { useOutletContext } from 'react-router-dom';
 import { API_URL, api, unwrap, getErrorMessage } from '../api';
 import type { DashboardContext } from '../components/DashboardLayout';
@@ -22,6 +22,52 @@ export function QueuePage() {
   const [walkInBusy, setWalkInBusy] = useState(false);
   const [walkIn, setWalkIn] = useState({ customerName: '', customerPhone: '' });
   const [predictionRefresh, setPredictionRefresh] = useState(0);
+  const [voiceEnabled, setVoiceEnabled] = useState(() => localStorage.getItem('qp_voice_announcements') === 'true');
+  const [voiceServiceAvailable, setVoiceServiceAvailable] = useState(false);
+  const audioPlayback = useRef<Promise<void>>(Promise.resolve());
+  const announcedCalls = useRef<Set<string>>(new Set());
+  const TTS_URL = (import.meta.env.VITE_TTS_URL || 'http://127.0.0.1:8765').replace(/\/$/, '');
+
+  useEffect(() => {
+    let active = true;
+    const checkVoiceService = async () => {
+      try {
+        const response = await fetch(`${TTS_URL}/health`);
+        if (!response.ok) throw new Error('TTS service unavailable');
+        if (active) setVoiceServiceAvailable(true);
+      } catch {
+        if (active) setVoiceServiceAvailable(false);
+      }
+    };
+    checkVoiceService();
+    const interval = window.setInterval(checkVoiceService, 10000);
+    return () => { active = false; window.clearInterval(interval); };
+  }, [TTS_URL]);
+
+  const playAnnouncement = (text: string) => {
+    audioPlayback.current = audioPlayback.current.then(async () => {
+      const response = await fetch(`${TTS_URL}/synthesize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+      if (!response.ok) throw new Error('تولید صدای فارسی ناموفق بود.');
+      const audioUrl = URL.createObjectURL(await response.blob());
+      try {
+        const audio = new Audio(audioUrl);
+        await new Promise<void>((resolve, reject) => {
+          audio.onended = () => resolve();
+          audio.onerror = () => reject(new Error('پخش فایل صوتی ناموفق بود.'));
+          audio.play().catch(reject);
+        });
+      } finally {
+        URL.revokeObjectURL(audioUrl);
+      }
+    }).catch((error) => {
+      console.error('QueuePilot voice announcement failed:', error);
+    });
+    return audioPlayback.current;
+  };
   const load = useCallback(async () => {
     if (!business) return;
     const res = await api.get(`/businesses/${business.id}/queue?limit=100`);
@@ -36,13 +82,45 @@ export function QueuePage() {
     socket.on('connect', () => { setConnected(true); socket.emit('queue:join', { businessId: business.id }); });
     socket.on('disconnect', () => setConnected(false));
     const refresh = () => { load().catch(() => undefined); };
-    socket.on('queue:created', refresh); socket.on('queue:updated', refresh); socket.on('queue:cancelled', refresh);
+    const announceCalledQueue = (payload: unknown) => {
+      if (!voiceEnabled || !voiceServiceAvailable) return;
+
+      // Backend event payloads may be wrapped; normalize the common shapes.
+      const source = payload as any;
+      const queue = source?.queue ?? source?.data?.queue ?? source?.data ?? source;
+      if (!queue || String(queue.status || '').toUpperCase() !== 'CALLED') return;
+
+      const queueNumber = Number(queue.queueNumber ?? queue.number);
+      if (!Number.isFinite(queueNumber) || queueNumber <= 0) return;
+
+      const queueId = String(queue.id ?? queue.queueId ?? `number-${queueNumber}`);
+      const eventKey = queueId;
+      if (announcedCalls.current.has(eventKey)) return;
+      announcedCalls.current.add(eventKey);
+
+      // Keep the in-memory dedupe set bounded during long-running dashboard sessions.
+      if (announcedCalls.current.size > 300) {
+        const oldest = announcedCalls.current.values().next().value;
+        if (oldest) announcedCalls.current.delete(oldest);
+      }
+
+      void playAnnouncement(
+        `شماره ${queueNumber.toLocaleString('fa-IR')}، لطفاً به باجه مراجعه کنید`
+      );
+    };
+
+    socket.on('queue:created', refresh);
+    socket.on('queue:updated', (payload: unknown) => {
+      announceCalledQueue(payload);
+      refresh();
+    });
+    socket.on('queue:cancelled', refresh);
     socket.on('queue:prediction-updated', () => {
       setPredictionRefresh((value) => value + 1);
       refresh();
     });
     return () => { socket.emit('queue:leave', { businessId: business.id }); socket.disconnect(); };
-  }, [business?.id, load]);
+  }, [business?.id, load, voiceEnabled, voiceServiceAvailable]);
   const update = async (item: QueueItem, status: string) => {
     setBusy(item.id); setError('');
     try { await api.patch(`/businesses/${business!.id}/queue/${item.id}/status`, { status }); await load(); }
@@ -62,6 +140,19 @@ export function QueuePage() {
     try { await api.delete(`/businesses/${business!.id}/queue/${item.id}`); await load(); }
     catch (e) { setError(getErrorMessage(e)); } finally { setBusy(null); }
   };
+  const toggleVoice = () => {
+    const next = !voiceEnabled;
+    setVoiceEnabled(next);
+    localStorage.setItem('qp_voice_announcements', String(next));
+    if (next) {
+      void playAnnouncement('اعلام صوتی کیو پایلوت فعال شد');
+    }
+  };
+
+  const testVoice = () => {
+    void playAnnouncement('اعلام صوتی کیو پایلوت فعال است');
+  };
+
   const filtered = useMemo(() => filter === 'ACTIVE' ? items.filter((i) => ['WAITING', 'CALLED', 'SERVING'].includes(i.status)) : filter === 'DONE' ? items.filter((i) => ['COMPLETED', 'CANCELLED', 'NO_SHOW'].includes(i.status)) : items, [items, filter]);
   const waitingItems = items
     .filter((i) => i.status === 'WAITING')
@@ -71,6 +162,25 @@ export function QueuePage() {
   if (!business) return <div className="empty-panel">ابتدا کسب‌وکارت را ثبت کن.</div>;
   return <><PageHeading eyebrow="عملیات روزانه" title="مدیریت صف انتظار" description="مراجعه‌کنندگان را به‌ترتیب فراخوانی و وضعیت خدمت را به‌روز کن." action={<div className="queue-heading-actions"><div className={`socket-badge ${connected ? 'is-connected' : ''}`}><i />{connected ? 'اتصال زنده برقرار است' : 'در حال اتصال...'}</div><Button onClick={() => setWalkInOpen(true)}><Plus size={16} /> مراجعه حضوری</Button></div>} />
     {error && <div className="form-error page-error">{error}</div>}
+    <div className="voice-announcement-bar">
+      <div className="voice-announcement-info">
+        <span className={`voice-announcement-icon ${voiceEnabled ? 'is-enabled' : ''}`}>
+          {voiceEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+        </span>
+        <span>
+          <strong>اعلام صوتی نوبت‌ها</strong>
+          <small>{!voiceServiceAvailable ? 'سرویس صدای فارسی محلی در دسترس نیست؛ ابتدا آن را اجرا کن.' : voiceEnabled ? 'با فراخوانی هر نوبت، شماره آن با صدای فارسی اعلام می‌شود.' : 'برای پخش خودکار صدای فراخوانی، این قابلیت را فعال کن.'}</small>
+        </span>
+      </div>
+      <div className="voice-announcement-actions">
+        <Button variant="secondary" className="button-small" onClick={testVoice} disabled={!voiceServiceAvailable}>
+          <Play size={14} /> تست صدا
+        </Button>
+        <Button className="button-small" variant={voiceEnabled ? 'secondary' : 'primary'} onClick={toggleVoice} disabled={!voiceServiceAvailable}>
+          {voiceEnabled ? 'غیرفعال‌کردن' : 'فعال‌سازی صدا'}
+        </Button>
+      </div>
+    </div>
     <div className="queue-summary"><div><span>در انتظار</span><b>{waiting.toLocaleString('fa-IR')}</b></div><div><span>در حال خدمت</span><b>{items.filter((i) => i.status === 'SERVING').length.toLocaleString('fa-IR')}</b></div><div><span>فراخوانده‌شده</span><b>{items.filter((i) => i.status === 'CALLED').length.toLocaleString('fa-IR')}</b></div><div><span>کل ثبت‌شده</span><b>{items.length.toLocaleString('fa-IR')}</b></div></div>
     {nextWaiting ? <PredictionCard key={nextWaiting.id} title={`تخمین نوبت بعدی · شماره ${nextWaiting.queueNumber}`} endpoint={`/businesses/${business.id}/predictions/queues/${nextWaiting.id}`} refreshKey={predictionRefresh} /> : <div className="prediction-empty"><Clock3 size={17} /><span>در حال حاضر نوبت منتظری برای تخمین وجود ندارد.</span></div>}
     <Card className="table-card"><div className="table-toolbar"><div className="filter-tabs"><button className={filter === 'ACTIVE' ? 'active' : ''} onClick={() => setFilter('ACTIVE')}>صف فعال</button><button className={filter === 'ALL' ? 'active' : ''} onClick={() => setFilter('ALL')}>همه</button><button className={filter === 'DONE' ? 'active' : ''} onClick={() => setFilter('DONE')}>پایان‌یافته</button></div><Button variant="secondary" onClick={() => load()}><RefreshCw size={15} /> تازه‌سازی</Button></div>
