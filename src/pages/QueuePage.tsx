@@ -82,32 +82,64 @@ export function QueuePage() {
     socket.on('connect', () => { setConnected(true); socket.emit('queue:join', { businessId: business.id }); });
     socket.on('disconnect', () => setConnected(false));
     const refresh = () => { load().catch(() => undefined); };
+   
     const announceCalledQueue = (payload: unknown) => {
       if (!voiceEnabled || !voiceServiceAvailable) return;
-
-      // Backend event payloads may be wrapped; normalize the common shapes.
+    
+      // Normalize backend event payload
       const source = payload as any;
-      const queue = source?.queue ?? source?.data?.queue ?? source?.data ?? source;
-      if (!queue || String(queue.status || '').toUpperCase() !== 'CALLED') return;
-
-      const queueNumber = Number(queue.queueNumber ?? queue.number);
-      if (!Number.isFinite(queueNumber) || queueNumber <= 0) return;
-
-      const queueId = String(queue.id ?? queue.queueId ?? `number-${queueNumber}`);
-      const eventKey = queueId;
-      if (announcedCalls.current.has(eventKey)) return;
-      announcedCalls.current.add(eventKey);
-
-      // Keep the in-memory dedupe set bounded during long-running dashboard sessions.
+      const queue =
+        source?.queue ??
+        source?.data?.queue ??
+        source?.data ??
+        source;
+    
+      if (
+        !queue ||
+        String(queue.status || '').toUpperCase() !== 'CALLED'
+      ) {
+        return;
+      }
+    
+      const queueNumber = Number(
+        queue.queueNumber ?? queue.number
+      );
+    
+      if (!Number.isFinite(queueNumber) || queueNumber <= 0) {
+        return;
+      }
+    
+      const queueId = String(
+        queue.id ?? queue.queueId ?? `number-${queueNumber}`
+      );
+    
+      // Prevent duplicate announcements
+      if (announcedCalls.current.has(queueId)) {
+        return;
+      }
+    
+      announcedCalls.current.add(queueId);
+    
+      // Keep the dedupe set bounded
       if (announcedCalls.current.size > 300) {
         const oldest = announcedCalls.current.values().next().value;
-        if (oldest) announcedCalls.current.delete(oldest);
+    
+        if (oldest) {
+          announcedCalls.current.delete(oldest);
+        }
       }
-
-      void playAnnouncement(
-        `شماره ${queueNumber.toLocaleString('fa-IR')}، لطفاً به باجه مراجعه کنید`
-      );
+    
+      const customerName = String(
+        queue.customerName ?? ''
+      ).trim();
+    
+      const announcement = customerName
+        ? `${customerName}، لطفاً به باجه مراجعه کنید`
+        : `شماره ${queueNumber.toLocaleString('fa-IR')}، لطفاً به باجه مراجعه کنید`;
+    
+      void playAnnouncement(announcement);
     };
+
 
     socket.on('queue:created', refresh);
     socket.on('queue:updated', (payload: unknown) => {
